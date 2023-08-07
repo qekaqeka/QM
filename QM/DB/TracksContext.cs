@@ -1,5 +1,6 @@
 ﻿using DSharpPlus.Lavalink;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -19,17 +20,25 @@ namespace QM.DB
 
         public virtual DbSet<Track> Tracks { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlite("Data Source=.\\DB\\Tracks.db");
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var config = new ConfigurationBuilder()
+                .AddUserSecrets<QM>()
+                .Build();
+
+            optionsBuilder.UseSqlite(config["QM:ConnectionString"]);
+        }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Track>().
-                HasKey(t => t.Id);
+            modelBuilder.Entity<Track>()
+                .HasKey(t => t.Id);
 
-            modelBuilder.Entity<Track>().
-                Property(t => t.LavalinkTrack).
-                HasColumnName("TrackString").
-                HasConversion<string>(
+            modelBuilder.Entity<Track>()
+                .Property(t => t.LavalinkTrack)
+                .HasColumnName("TrackString")
+                .HasConversion<string>(
                     t => t.TrackString, 
                     t => LavalinkUtilities.DecodeTrack(t) ?? new LavalinkTrack());
         }

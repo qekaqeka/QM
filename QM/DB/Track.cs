@@ -4,7 +4,6 @@ using System;
 
 namespace QM.DB
 {
-    [Serializable]
     public class Track
     {
         public Track(ulong discordGuildId, LavalinkTrack lavalinkTrack, ulong userId, ulong channelId)

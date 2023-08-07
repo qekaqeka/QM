@@ -5,6 +5,7 @@ using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.Lavalink;
 using DSharpPlus.Net;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using QM.Commands.Music;
 using System;
@@ -14,15 +15,19 @@ using System.Threading.Tasks;
 
 namespace QM
 {
-    internal class Programm
+    internal class QM
     {
-        public static void Main(string[] args) => Programm.MainTask(args).ConfigureAwait(false).GetAwaiter().GetResult();
+        public static void Main(string[] args) => MainTask(args).ConfigureAwait(false).GetAwaiter().GetResult();
 
         private static async Task MainTask(string[] args)
         {
+            var config = new ConfigurationBuilder()
+                .AddUserSecrets<QM>()
+                .Build();
+
             DiscordClient discord = new (new DiscordConfiguration()
             {
-                Token = new StreamReader("token.txt").ReadLine(),
+                Token = config["QM:DiscordApiToken"],
                 TokenType = TokenType.Bot,
                 MinimumLogLevel = LogLevel.Debug,
                 Intents = DiscordIntents.AllUnprivileged | DiscordIntents.MessageContents
