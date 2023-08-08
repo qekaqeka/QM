@@ -42,6 +42,6 @@ namespace QM.DB
             return track.Id == Id;
         }
 
-        public override int GetHashCode() => (int)Id;
+        public override int GetHashCode() => (int)(Id % int.MaxValue);
     }
 }
