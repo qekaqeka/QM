@@ -1,0 +1,23 @@
+version: "2.19"
+
+services:
+    lava:
+        build: Lavalink/
+        
+        command: java -jar Lavalink.jar
+        
+    command_handler:
+        build: QM/
+        
+        environment:
+            - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+            - USER_SECRETS_ID=${USER_SECRETS_ID}
+            
+        volumes:
+            - $APPDATA/Microsoft/UserSecrets/${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}
+            - $HOME/.microsoft/usersecrets/${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}
+        
+        command: dotnet QM.dll
+        
+        depends_on:
+            - lava
