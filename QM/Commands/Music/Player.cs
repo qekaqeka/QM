@@ -79,9 +79,10 @@ namespace QM.Commands.Music
                 _track = tracksContext.Tracks.Add(new Track(Connection.Guild.Id, track, client.Id, channel.Id)).Entity;
                 tracksContext.SaveChanges();
             }
-            if (play || CurrentTrack == null) return;
-
-            await PlayAsync(_track);
+            if (play && CurrentTrack == null)
+            {
+                await PlayAsync(_track);
+            }
         }
 
         public async Task Stop()

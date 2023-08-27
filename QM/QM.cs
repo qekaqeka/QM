@@ -27,7 +27,7 @@ namespace QM
 
             DiscordClient discord = new (new DiscordConfiguration()
             {
-                Token = config["QM:DiscordApiToken"],
+                Token = config["QM:DiscordAPIToken"],
                 TokenType = TokenType.Bot,
                 MinimumLogLevel = LogLevel.Debug,
                 Intents = DiscordIntents.AllUnprivileged | DiscordIntents.MessageContents
@@ -40,12 +40,13 @@ namespace QM
             commands.RegisterConverter(new LoopTypeConverter());
             ConnectionEndpoint endpoint = new ()
             {
-                Hostname = "127.0.0.1",
+                Hostname = Environment.GetEnvironmentVariable("LAVALINK_IP") ?? "127.0.0.1",
                 Port = 2333
             };
+            await Console.Out.WriteLineAsync(endpoint.Hostname);
             LavalinkConfiguration lavalinkConfig = new ()
             {
-                Password = "qekaqeka",
+                Password = config["QM:LavalinkPassword"],
                 RestEndpoint = endpoint,
                 SocketEndpoint = endpoint
             };
@@ -56,7 +57,7 @@ namespace QM
             });
             await discord.ConnectAsync();
             await lavalink.ConnectAsync(lavalinkConfig);
-            Console.ReadKey();
+            await Task.Delay(-1);
             await discord.DisconnectAsync();
         }
     }

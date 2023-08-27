@@ -4,6 +4,9 @@ services:
     lava:
         build: Lavalink/
         
+        ports:
+            - "2333:2333"
+        
         command: java -jar Lavalink.jar
         
     command_handler:
@@ -12,12 +15,18 @@ services:
         environment:
             - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
             - USER_SECRETS_ID=${USER_SECRETS_ID}
+            - LAVALINK_IP=lava
             
         volumes:
             - $APPDATA/Microsoft/UserSecrets/${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}
             - $HOME/.microsoft/usersecrets/${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}
+            - db-tracks:/DB
         
         command: dotnet QM.dll
         
         depends_on:
             - lava
+            
+volumes:
+    db-tracks:
+ 

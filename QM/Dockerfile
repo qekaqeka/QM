@@ -6,7 +6,7 @@ VOLUME ["/app/DB"]
 
 COPY . .
 
-RUN dotnet restore
+RUN dotnet restore -v diag
 
 RUN dotnet publish -c Release -o out
 

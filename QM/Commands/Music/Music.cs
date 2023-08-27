@@ -230,7 +230,7 @@ namespace QM.Commands.Music
                     if (trackName.Length > 40)
                         trackName = trackName.Substring(0, 40) + "...";
 
-                    pageBuilder.Append($"{trackNumber}. [{trackName}]({chunk[index].Uri})");
+                    pageBuilder.AppendLine($"{trackNumber}. [{trackName}]({chunk[index].Uri})");
 
                     ++trackNumber;
                 }
@@ -337,7 +337,7 @@ namespace QM.Commands.Music
 
                     string userName = discordUser.Username;
 
-                    pageBuilder.AppendLine($"{trackNumber}. [{trackName}[{track.LavalinkTrack.Uri}] - Запросил {userName}");
+                    pageBuilder.AppendLine($"{trackNumber}. [{trackName}]({track.LavalinkTrack.Uri}) - Запросил {userName}");
 
                     ++trackNumber;
                 }

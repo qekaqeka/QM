@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection.Emit;
 
@@ -11,7 +12,17 @@ namespace QM.DB
 {
     public class TracksContext : DbContext
     {
-        public TracksContext() => Database.EnsureCreated();
+        public TracksContext()
+        {
+            try
+            {
+                bool t = Database.EnsureCreated();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
 
         public TracksContext(DbContextOptions<TracksContext> options)
           : base(options)
