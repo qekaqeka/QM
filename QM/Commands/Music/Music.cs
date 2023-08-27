@@ -125,7 +125,17 @@ namespace QM.Commands.Music
                 return;
             }
 
-            var loadResult = await player.Connection.GetTracksAsync(search);
+            LavalinkLoadResult loadResult;
+
+            if (Uri.TryCreate(search, UriKind.Absolute, out var uri))
+            {
+                loadResult = await player.Connection.GetTracksAsync(uri);
+            }
+            else
+            {
+                loadResult = await player.Connection.GetTracksAsync(search);
+            }
+            
 
             if (loadResult.LoadResultType == LavalinkLoadResultType.LoadFailed || loadResult.LoadResultType == LavalinkLoadResultType.NoMatches)
             {
