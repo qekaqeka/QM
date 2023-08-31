@@ -10,6 +10,7 @@ using DSharpPlus.Lavalink;
 using DSharpPlus.Net;
 using Microsoft.EntityFrameworkCore;
 using QM.DB;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -135,7 +136,7 @@ namespace QM.Commands.Music
             {
                 loadResult = await player.Connection.GetTracksAsync(search);
             }
-            
+
 
             if (loadResult.LoadResultType == LavalinkLoadResultType.LoadFailed || loadResult.LoadResultType == LavalinkLoadResultType.NoMatches)
             {
@@ -143,8 +144,19 @@ namespace QM.Commands.Music
                 return;
             }
 
-            var track = loadResult.Tracks.First();
-            await player.AddAsync(track, ctx.User, ctx.Channel, true);
+            if (loadResult.LoadResultType == LavalinkLoadResultType.PlaylistLoaded)
+            {
+                foreach(var track in loadResult.Tracks)
+                {
+                    await player.AddAsync(track, ctx.User, ctx.Channel, true);
+                }
+            }
+            else
+            {
+                var track = loadResult.Tracks.First();
+                await player.AddAsync(track, ctx.User, ctx.Channel, true);
+            }
+
         }
 
         [Command]
@@ -254,7 +266,7 @@ namespace QM.Commands.Music
                 };
 
                 pages.Add(new Page(embed: deb));
-                ++pageNumber;;
+                ++pageNumber; ;
             }
             var inter = ctx.Client.GetInteractivity();
             var cts = new CancellationTokenSource();
@@ -277,7 +289,7 @@ namespace QM.Commands.Music
             });
 
             if (!result.TimedOut)
-            { 
+            {
                 cts.Cancel();
                 int trackIndex = int.Parse(result.Result.Content) - 1;
                 LavalinkTrack track = loadResult.Tracks.ElementAt(trackIndex);
@@ -295,7 +307,7 @@ namespace QM.Commands.Music
             if (player == null) return;
 
             List<Track> tracks;
-            using (TracksContext tracksContext = new ())
+            using (TracksContext tracksContext = new())
             {
                 tracks = tracksContext.Tracks.ToList().Where(track => track.DiscordGuildId == ctx.Guild.Id).ToList();
             }
@@ -318,7 +330,7 @@ namespace QM.Commands.Music
 
             var pages = new List<Page>();
             var tracksChunks = new List<Track[]>();
-            using (TracksContext tracksContext = new ())
+            using (TracksContext tracksContext = new())
             {
                 tracksChunks = tracksContext.Tracks.ToList().Where(track => track.DiscordGuildId == ctx.Guild.Id).Chunk(10).ToList();
             }
@@ -341,7 +353,7 @@ namespace QM.Commands.Music
 
                     string trackName = track.LavalinkTrack.Title;
                     if (trackName.Length > 30)
-                        trackName = trackName.Substring(0, 30) + "..."; 
+                        trackName = trackName.Substring(0, 30) + "...";
 
                     var discordUser = await ctx.Client.GetUserAsync(track.UserId);
 
@@ -363,8 +375,8 @@ namespace QM.Commands.Music
                 ++pageNumber;
             }
             var inter = ctx.Client.GetInteractivity();
-           
-            _ = inter.SendPaginatedMessageAsync(ctx.Channel, ctx.User, pages);   
+
+            _ = inter.SendPaginatedMessageAsync(ctx.Channel, ctx.User, pages);
         }
 
         [Command]
@@ -377,7 +389,7 @@ namespace QM.Commands.Music
 
             List<Track> tracks;
 
-            using (TracksContext tracksContext = new ())
+            using (TracksContext tracksContext = new())
             {
                 tracks = tracksContext.Tracks.ToList().Where(track => track.DiscordGuildId == ctx.Guild.Id).ToList();
             }
@@ -406,7 +418,7 @@ namespace QM.Commands.Music
 
             if (player?.CurrentTrack == null) return;
 
-            using (TracksContext tracksContext = new ())
+            using (TracksContext tracksContext = new())
             {
                 tracks = tracksContext.Tracks.ToList().Where(track => track.DiscordGuildId == ctx.Guild.Id).ToList();
             }
@@ -446,7 +458,7 @@ namespace QM.Commands.Music
             if (ctx.Guild == null) return;
 
             int count = 0;
-            using (TracksContext tracksContext = new ())
+            using (TracksContext tracksContext = new())
             {
                 count = tracksContext.Tracks.Where(t => t.DiscordGuildId == ctx.Guild.Id).ExecuteDelete();
                 tracksContext.SaveChanges();
@@ -461,7 +473,7 @@ namespace QM.Commands.Music
         {
             if (ctx.Guild == null) return;
 
-            using (TracksContext tracksContext = new ())
+            using (TracksContext tracksContext = new())
             {
                 List<Track> tracks = tracksContext.Tracks.Where(t => t.DiscordGuildId == ctx.Guild.Id).ToList();
 
@@ -476,6 +488,30 @@ namespace QM.Commands.Music
             }
 
             await ctx.RespondAsync("Трек был успешно удалён.");
+        }
+
+        [Command]
+        [Aliases("sw", "ыц", "ыргаадуцщквы")]
+        public async Task ShuffleWords(CommandContext ctx,[RemainingText] string words)
+        {
+            var wordsList = words.Split(" ").ToList();
+
+            var resultStringBuilder = new StringBuilder();
+            
+            var rand = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
+
+            for (int i = wordsList.Count(); i > 0 ; i--)
+            {
+                int randomIndex = rand.Next(i);
+                var word = wordsList[randomIndex];
+
+                resultStringBuilder.Append(word);
+                resultStringBuilder.Append(' ');
+
+                wordsList.RemoveAt(randomIndex);
+            }
+
+            await ctx.RespondAsync(resultStringBuilder.ToString());
         }
     }
 }
