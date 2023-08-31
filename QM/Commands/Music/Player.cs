@@ -133,7 +133,7 @@ namespace QM.Commands.Music
             switch (loop)
             {
                 case LoopType.None:
-                    if (index != tracks.Count - 1)
+                    if (index == tracks.Count - 1)
                     {
                         nextTrack = null;
                     }
@@ -148,9 +148,9 @@ namespace QM.Commands.Music
                     break;
 
                 case LoopType.All:
-                    if (index != tracks.Count - 1)
+                    if (index == tracks.Count - 1)
                     {
-                        nextTrack = tracks[0];
+                        nextTrack = tracks.FirstOrDefault();
                     }
                     else
                     {

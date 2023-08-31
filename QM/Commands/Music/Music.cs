@@ -157,6 +157,7 @@ namespace QM.Commands.Music
                 await player.AddAsync(track, ctx.User, ctx.Channel, true);
             }
 
+            await ctx.RespondAsync("Очередь успешно обновлена!");
         }
 
         [Command]
@@ -458,9 +459,11 @@ namespace QM.Commands.Music
             if (ctx.Guild == null) return;
 
             int count = 0;
+            var currentTrackId = Player.GetPlayer(ctx.Guild)?.CurrentTrack?.Id ?? -1; 
+
             using (TracksContext tracksContext = new())
             {
-                count = tracksContext.Tracks.Where(t => t.DiscordGuildId == ctx.Guild.Id).ExecuteDelete();
+                count = tracksContext.Tracks.Where(t => t.DiscordGuildId == ctx.Guild.Id && t.Id != currentTrackId ).ExecuteDelete();
                 tracksContext.SaveChanges();
             }
 
@@ -473,6 +476,8 @@ namespace QM.Commands.Music
         {
             if (ctx.Guild == null) return;
 
+            var currentTrackId = Player.GetPlayer(ctx.Guild)?.CurrentTrack?.Id ?? -1;
+
             using (TracksContext tracksContext = new())
             {
                 List<Track> tracks = tracksContext.Tracks.Where(t => t.DiscordGuildId == ctx.Guild.Id).ToList();
@@ -483,11 +488,17 @@ namespace QM.Commands.Music
                     return;
                 }
                 Track track = tracks.ElementAt(index - 1);
-                tracksContext.Tracks.Remove(track);
-                tracksContext.SaveChanges();
+                if (track.Id != currentTrackId)
+                {
+                    tracksContext.Tracks.Remove(track);
+                    tracksContext.SaveChanges();
+                    await ctx.RespondAsync("Трек был успешно удалён.");
+                }
+                else
+                {
+                    await ctx.RespondAsync("Невозможно удалить трек, который играет в данный момент!");
+                }
             }
-
-            await ctx.RespondAsync("Трек был успешно удалён.");
         }
 
         [Command]

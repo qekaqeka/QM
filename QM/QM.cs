@@ -43,7 +43,7 @@ namespace QM
                 Hostname = Environment.GetEnvironmentVariable("LAVALINK_IP") ?? "127.0.0.1",
                 Port = 2333
             };
-            await Console.Out.WriteLineAsync(endpoint.Hostname);
+
             LavalinkConfiguration lavalinkConfig = new ()
             {
                 Password = config["QM:LavalinkPassword"],
