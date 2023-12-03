@@ -15,5 +15,3 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 
 COPY --from=build /app/out .
-
-ARG USER_SECRETS_ID

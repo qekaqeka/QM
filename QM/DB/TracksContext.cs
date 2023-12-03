@@ -34,7 +34,7 @@ namespace QM.DB
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var config = new ConfigurationBuilder()
-                .AddUserSecrets<QM>()
+                .AddJsonFile("secrets.json", true, true)
                 .Build();
 
             optionsBuilder.UseSqlite(config["QM:ConnectionString"]);

@@ -14,12 +14,10 @@ services:
         
         environment:
             - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-            - USER_SECRETS_ID=${USER_SECRETS_ID}
-            - LAVALINK_IP=lava
+            - LAVALINK_IP=${LAVALINK_PORT}
+            - LAVALINK_PORT=${LAVALINK_PORT}
             
         volumes:
-            - $APPDATA/Microsoft/UserSecrets/${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}
-            - $HOME/.microsoft/usersecrets/${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}
             - db-tracks:/DB
         
         command: dotnet QM.dll

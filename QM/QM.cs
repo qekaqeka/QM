@@ -22,7 +22,7 @@ namespace QM
         private static async Task MainTask(string[] args)
         {
             var config = new ConfigurationBuilder()
-                .AddUserSecrets<QM>()
+                .AddJsonFile("secrets.json", true, true)
                 .Build();
 
             DiscordClient discord = new (new DiscordConfiguration()
@@ -41,7 +41,7 @@ namespace QM
             ConnectionEndpoint endpoint = new ()
             {
                 Hostname = Environment.GetEnvironmentVariable("LAVALINK_IP") ?? "127.0.0.1",
-                Port = 2333
+                Port = Environment.GetEnvironmentVariable("LAVALINK_PORT") ?? "2333"
             };
 
             LavalinkConfiguration lavalinkConfig = new ()

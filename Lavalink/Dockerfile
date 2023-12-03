@@ -1,5 +1,5 @@
 FROM openjdk:17
 
-COPY . .
+WORKDIR /app/Lavalink
 
-ENTRYPOINT ["java", "-jar", "Lavalink.jar"]
+COPY . .

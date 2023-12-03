@@ -397,6 +397,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+secrets.*
 token.txt
 *.db
 Lavalink.jar
