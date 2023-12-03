@@ -41,7 +41,7 @@ namespace QM
             ConnectionEndpoint endpoint = new ()
             {
                 Hostname = Environment.GetEnvironmentVariable("LAVALINK_IP") ?? "127.0.0.1",
-                Port = Environment.GetEnvironmentVariable("LAVALINK_PORT") ?? "2333"
+                Port = int.TryParse(Environment.GetEnvironmentVariable("LAVALINK_PORT"), out var port) ? port : 2333
             };
 
             LavalinkConfiguration lavalinkConfig = new ()
