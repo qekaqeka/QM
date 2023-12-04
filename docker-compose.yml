@@ -1,26 +1,28 @@
-version: "2.19"
+version: "3.8"
 
 services:
     lava:
         build: Lavalink/
+        hostname: lava
+        
+        networks:
+            - lavalink
         
         ports:
             - "2333:2333"
         
-        command: java -jar Lavalink.jar
-        
     command_handler:
         build: QM/
         
+        networks:
+            - lavalink
+        
         environment:
-            - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-            - LAVALINK_IP=${LAVALINK_PORT}
+            - LAVALINK_IP=${LAVALINK_IP}
             - LAVALINK_PORT=${LAVALINK_PORT}
             
         volumes:
             - db-tracks:/DB
-        
-        command: dotnet QM.dll
         
         depends_on:
             - lava
@@ -28,5 +30,6 @@ services:
 volumes:
     db-tracks:
     
- 
- 
+networks:
+    lavalink:
+        name: lavalink 
