@@ -59,10 +59,13 @@ namespace QM.Commands.Music
             return player;
         }
 
-        public async Task PlayAsync(Track track)
+        public async Task PlayAsync(Track? track)
         {
-            if (track.LavalinkTrack.TrackString == string.Empty)
+            if (track == null || track.LavalinkTrack.TrackString == string.Empty)
+            {
+                CurrentTrack = null;
                 return;
+            }
 
             CurrentTrack = track;
 
@@ -158,8 +161,6 @@ namespace QM.Commands.Music
                     }
                     break;
             }
-
-            if (nextTrack == null) return;
 
             await PlayAsync(nextTrack);
         }

@@ -1,7 +1,8 @@
 ﻿using DSharpPlus.Lavalink;
-using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Microsoft.Extensions.Configuration;
 using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
@@ -37,7 +38,13 @@ namespace QM.DB
                 .AddJsonFile("secrets.json", true, true)
                 .Build();
 
-            optionsBuilder.UseSqlite(config["QM:ConnectionString"]);
+            var builder = new NpgsqlConnectionStringBuilder();
+            builder.Host = "db";
+            builder.Username = Environment.GetEnvironmentVariable("POSTGRES_USER");
+            builder.Database = Environment.GetEnvironmentVariable("POSTGRES_DB");
+            builder.Password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+            builder.Port = 5432;
+            optionsBuilder.UseNpgsql(builder.ToString());
         }
 
 

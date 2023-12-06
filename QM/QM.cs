@@ -40,13 +40,13 @@ namespace QM
             commands.RegisterConverter(new LoopTypeConverter());
             ConnectionEndpoint endpoint = new ()
             {
-                Hostname = Environment.GetEnvironmentVariable("LAVALINK_IP") ?? "127.0.0.1",
+                Hostname = "lava",
                 Port = int.TryParse(Environment.GetEnvironmentVariable("LAVALINK_PORT"), out var port) ? port : 2333
             };
 
             LavalinkConfiguration lavalinkConfig = new ()
             {
-                Password = config["QM:LavalinkPassword"],
+                Password = Environment.GetEnvironmentVariable("LAVALINK_PASSWORD") ?? "youshellnotpass",
                 RestEndpoint = endpoint,
                 SocketEndpoint = endpoint
             };
