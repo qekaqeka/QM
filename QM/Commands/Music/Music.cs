@@ -296,6 +296,8 @@ namespace QM.Commands.Music
                 LavalinkTrack track = loadResult.Tracks.ElementAt(trackIndex);
                 await player.AddAsync(track, ctx.User, ctx.Channel, true);
             }
+
+            await ctx.RespondAsync("Очередь успешно обновлена!");
         }
 
 
