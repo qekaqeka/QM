@@ -6,6 +6,7 @@ using QM.DB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 
@@ -15,13 +16,29 @@ namespace QM.Commands.Music
     {
         None,
         One,
-        All,
+        All
+    }
+    public enum AddType
+    {
+        OnlyAdd,
+        PlayAndAdd
     }
     internal class PlaybackStartedEventArgs : EventArgs
     {
         public PlaybackStartedEventArgs(Track track) => Track = track;
 
-        public Track Track { get; private set; }
+        public readonly Track Track;
+    }
+    internal class TrackAddedEventArgs : EventArgs
+    {
+        public TrackAddedEventArgs(Track track, AddType addType)
+        {
+            Track = track;
+            AddType = addType;
+        }
+
+        public readonly Track Track;
+        public readonly AddType AddType;
     }
     internal class Player
     {
@@ -85,6 +102,11 @@ namespace QM.Commands.Music
             if (play && CurrentTrack == null)
             {
                 await PlayAsync(_track);
+                TrackAdded?.Invoke(this, new TrackAddedEventArgs(_track, AddType.PlayAndAdd));
+            }
+            else
+            {
+                TrackAdded?.Invoke(this, new TrackAddedEventArgs(_track, AddType.OnlyAdd));
             }
         }
 
@@ -166,11 +188,13 @@ namespace QM.Commands.Music
         }
 
         public event PlaybackStartedHandler? PlaybackStarted;
+        public event TrackAddedHandler? TrackAdded;
 
         public Track? CurrentTrack { get; private set; }
 
         public LoopType Loop { get; set; }
 
         public delegate void PlaybackStartedHandler(object sender, PlaybackStartedEventArgs e);
+        public delegate void TrackAddedHandler(object sender, TrackAddedEventArgs e);
     }
 }

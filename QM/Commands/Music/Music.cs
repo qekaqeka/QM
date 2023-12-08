@@ -57,6 +57,7 @@ namespace QM.Commands.Music
             {
                 player = new Player(conn);
                 player.PlaybackStarted += OnPlaybackStarted;
+                player.TrackAdded += OnTrackAdded;
             }
 
             return player;
@@ -70,11 +71,25 @@ namespace QM.Commands.Music
                 DiscordChannel channel = await discord.GetChannelAsync(e.Track.ChannelId);
                 if (channel != null)
                 {
-                    await discord.SendMessageAsync(channel, "Сейчас играет: **" + e.Track.LavalinkTrack.Title + "**");
+                    await discord.SendMessageAsync(channel, $"Сейчас играет: **{e.Track.LavalinkTrack.Title}**");
                 }
             }
         }
-
+        private static async void OnTrackAdded(object sender, TrackAddedEventArgs e)
+        {
+            if (sender is Player player)
+            {
+                DiscordClient discord = player.Connection.Node.Discord;
+                DiscordChannel channel = await discord.GetChannelAsync(e.Track.ChannelId);
+                if (channel != null)
+                {
+                    if (e.AddType == AddType.OnlyAdd)
+                    {
+                        await discord.SendMessageAsync(channel, $"Трек **{e.Track.LavalinkTrack.Title}** успешно добавлен в очередь");
+                    }
+                }
+            }
+        }
         [Command]
         [Aliases("j", "ощшт", "о")]
         [Description("Подключение к голосовому каналу, в котором находится пользователь, вызвывший эту комманду.")]
@@ -156,8 +171,6 @@ namespace QM.Commands.Music
                 var track = loadResult.Tracks.First();
                 await player.AddAsync(track, ctx.User, ctx.Channel, true);
             }
-
-            await ctx.RespondAsync("Очередь успешно обновлена!");
         }
 
         [Command]
@@ -296,8 +309,6 @@ namespace QM.Commands.Music
                 LavalinkTrack track = loadResult.Tracks.ElementAt(trackIndex);
                 await player.AddAsync(track, ctx.User, ctx.Channel, true);
             }
-
-            await ctx.RespondAsync("Очередь успешно обновлена!");
         }
 
 
